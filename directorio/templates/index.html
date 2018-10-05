@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}Directorio Profesional{% endblock %}
+
+{% block container %}
+	<!DOCTYPE html>
+<html>
+  <head>
+	<style>
+	  #map {
+		width: 100%;
+		height: 440px;
+	  }
+	</style>
+  </head>
+<body>
+{% if  mensaje  %}
+	<p class="color red">{{ mensaje }}</p>
+{% endif %}
+<div id="cab" class="card width =100px z-depth-3" >
+	<h4 id="titulo1">Solo Los Mejores Profesionales </h4>
+</div>
+	   
+<form method="POST" action="" class="busqueda" align="center" style="margin-right: 30%;  padding-left: 25%; padding-top: -20px;">
+	<div id="pro" class="card">
+		{% csrf_token %}
+		Profesion: {{ form.profesion }}
+	</div>
+	<div id="pro2" class="card">
+		Ciudad: {{ form.ciudad }}
+	</div>
+	<button id="bus" class="btn btn-default #26a69a"><i class="material-icons">find_in_page</i></button>
+</form>
+
+<script type="text/javascript">
+	var lats = [];
+	var lons = [];
+</script>
+
+{% for a in ap %}
+<div id="table" class="card">
+	<table class="highlight">
+		<thead>
+			<tr>
+				<th>NOMBRE</th>
+				<th>PROFESIÓN</th>
+				<th>CIUDAD</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><p >{{ a.nombre }}</p></td>
+				<td><p>{{ a.profesion }}</p></td>
+				<td><p>{{ a.ciudad }}</p></td>
+				
+			</tr>
+		</tbody>
+	</table>
+</div>
+<script type="text/javascript">
+	lats.push({{a.lat}});
+	lons.push({{a.lng}});
+</script>
+
+{% endfor %}
+
+<br>
+<!--The div element for the map -->
+<div class="card" id="map">
+<script>
+// Initialize and add the map
+	
+	  var map,infoWindow;
+	  function initMap() {
+		map = new google.maps.Map(document.getElementById('map'), {
+		  zoom: 10,
+		  center: new google.maps.LatLng(lats, lons),
+		  mapTypeId: 'terrain'
+		});
+
+		// Create a <script> tag and set the USGS URL as the source.
+		var script = document.createElement('script');
+		// This example uses a local copy of the GeoJSON stored at
+		// http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+		script.src = 'https://developers.google.com/maps/documentation/javascript/examples/json/earthquake_GeoJSONP.js';
+		document.getElementsByTagName('head')[0].appendChild(script);
+	  }
+
+	  // Loop through the results array and place a marker for each
+	  // set of coordinates.
+	  window.eqfeed_callback = function()
+	  {
+		
+
+		infoWindow = new google.maps.InfoWindow;
+
+		// Try HTML5 geolocation.
+		if (navigator.geolocation)
+		{
+		  navigator.geolocation.getCurrentPosition(function(position) {
+			var pos = {
+			  lat: position.coords.latitude,
+			  lng: position.coords.longitude
+			};
+
+			infoWindow.setPosition(pos);
+			infoWindow.setContent('Estas Aqui.');
+			infoWindow.open(map);
+			map.setCenter(pos);
+
+			var latActual = pos.lat
+			var lonActual = pos.lng
+
+			for (var i = 0; i < lons.length; i++)
+		  	{
+		  		if (lats[i] < (latActual+3) && lats[i] > (latActual-2) && lons[i] < (lonActual+2) && lons[i] > (lonActual-2))
+		  		{
+		  			console.log("entra");
+		  				var latLng = new google.maps.LatLng(lats[i],lons[i]);
+						var marker = new google.maps.Marker({position: latLng,map: map });
+		  		}
+		  		
+		  	}
+
+		  },function() {
+			handleLocationError(true, infoWindow, map.getCenter());
+			for (var i = 0; i < lons.length; i++)
+		  		{
+					var latLng = new google.maps.LatLng(lats[i],lons[i]);
+					var marker = new google.maps.Marker({position: latLng, map: map });
+		  		}
+
+		  });
+		} else {
+		  // Browser doesn't support Geolocation
+		  handleLocationError(false, infoWindow, map.getCenter());
+		  for (var i = 0; i < lons.length; i++)
+		  		{
+					var latLng = new google.maps.LatLng(lats[i],lons[i]);
+					var marker = new google.maps.Marker({position: latLng,map: map });
+		  		}
+
+		}
+	  	
+	  function handleLocationError(browserHasGeolocation, infoWindow) {
+		infoWindow.setPosition();
+		infoWindow.setContent(browserHasGeolocation ?
+							  'Error: Su Posicion no Se Encontro Su Ubicacion.' :
+							  'Error: Your browser doesn\'t support geolocation.');
+		infoWindow.open(map);
+	  }
+	};
+	</script>
+
+</div>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAsJuD6IIpaVSwpkXRfKkHWfrQp-0cK0Yc&callback=initMap">
+</script>
+
+</body>
+</html>
+{% endblock %}
