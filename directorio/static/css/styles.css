@@ -1,0 +1,51 @@
+body{
+	background: #E6E6E6;
+	font-family: cursive;
+}
+
+.container{
+	background: #fff;
+	box-shadow: 0 0 10px #000;
+	border-radius: 10px;
+	width: 1000px;
+	margin: 0 auto;
+	padding: 5px;
+	text-align: center;
+}
+
+#map{
+	margin-top: -20px;
+}
+
+#pro{
+	width: 300px;
+	height: 55px;
+	margin-left: -55%;
+	margin-top: 40px;
+}
+
+#pro2{
+	width: 300px;
+	height: 55px;
+	margin-left: 20%;
+	margin-top: -70px;
+}
+
+#titulo1{
+	padding: 30px;
+}
+
+#cab{
+	background: #26a69a;
+}
+
+#bus{
+	margin-left: 95%;
+	margin-top: -107px;
+}
+
+#table{
+	border-radius: 10px;
+	width: 340px;
+	height: 110px;
+}
